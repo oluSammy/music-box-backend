@@ -1,0 +1,44 @@
+name: groupB workflow CI
+ 
+on:
+  push:
+    branches: [ staging ]
+   
+  pull_request:
+    branches: [ staging ]
+ 
+jobs:
+  testIncomingPullRquest:
+ 
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [14.x]
+
+ 
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: install dependencies
+        run: |
+          rm -rf node_modules/
+          yarn install --frozen-lockfile
+          
+      - name: transpile typescript 
+        run: yarn test
+        env:
+         DATABASE_URL: ${{secrets.DATABASE_URL}}
+         JWT_SECRET_KEY: ${{secrets.JWT_SECRET_KEY}}
+         FACEBOOK_CLIENT_ID: ${{secrets.FACEBOOK_CLIENT_ID}}
+         FACEBOOK_CLIENT_SECRET: ${{secrets.FACEBOOK_CLIENT_SECRET}}
+         GOOGLE_CLIENT_ID: ${{secrets.GOOGLE_CLIENT_ID}}
+         GOOGLE_CLIENT_SECRET: ${{secrets.GOOGLE_CLIENT_SECRET}}
+         GENRE_URL: ${{secrets.GENRE_URL}}
+         SEARCH_ALBUM_URL: ${{secrets.SEARCH_ALBUM_URL}}
+         SEARCH_PLAYLIST_URL: ${{secrets.SEARCH_PLAYLIST_URL}}
+         SEARCH_ARTIST_URL: ${{secrets.SEARCH_ARTIST_URL}}
